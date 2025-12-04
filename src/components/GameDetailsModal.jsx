@@ -1,93 +1,82 @@
 import React from 'react';
 import { X, ThumbsUp, ThumbsDown, Calendar, Clock } from 'lucide-react';
-
 const GameDetailsModal = ({ game, votes, onClose }) => {
     if (!game) return null;
-
     const upVotes = votes?.upVotes || 0;
     const downVotes = votes?.downVotes || 0;
     const totalVotes = upVotes + downVotes;
     const likeRatio = totalVotes > 0 ? Math.round((upVotes / totalVotes) * 100) : 0;
-
     return (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-            <div className="bg-zinc-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-zinc-800 shadow-2xl" onClick={e => e.stopPropagation()}>
-                <div className="relative h-64">
-                    <img
-                        src={`https://tr.rbxcdn.com/30DAY-GameIcon-${game.rootPlace?.id}-150x150-PNG`} // Fallback/Placeholder logic handled in parent or here
-                        alt={game.name}
-                        className="w-full h-full object-cover opacity-50"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent" />
+        <div
+            className={`fixed inset-0 bg-black/80 flex items-center justify-center z-50 transition-opacity p-4 ${game ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                }`}
+            onClick={onClose}
+        >
+            <div
+                className="bg-zinc-900 rounded-2xl p-4 sm:p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-zinc-800 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex justify-between items-start mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-2xl font-bold text-white pr-4">{game?.name}</h2>
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 bg-black/50 p-2 rounded-full hover:bg-white/20 transition-colors"
+                        className="bg-zinc-800 hover:bg-zinc-700 p-2 rounded-lg transition-colors flex-shrink-0"
                     >
-                        <X size={24} />
+                        <X size={20} />
                     </button>
-                    <div className="absolute bottom-6 left-6 right-6">
-                        <h2 className="text-3xl font-bold mb-2">{game.name}</h2>
-                        <div className="flex items-center gap-4">
-                            <span className="bg-blue-600 px-3 py-1 rounded-full text-sm font-medium">
-                                {likeRatio}% Likes
-                            </span>
-                            <span className="text-gray-300 text-sm">
-                                {totalVotes.toLocaleString()} Votes
-                            </span>
+                </div>
+                {game?.description && (
+                    <div className="mb-4 sm:mb-6">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-300 mb-2">Description</h3>
+                        <p className="text-sm sm:text-base text-gray-400 leading-relaxed">{game.description}</p>
+                    </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="bg-zinc-800 p-3 sm:p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                            <ThumbsUp className="text-green-500" size={18} />
+                            <span className="text-sm sm:text-base text-gray-400">Upvotes</span>
                         </div>
+                        <p className="text-lg sm:text-xl font-bold">{upVotes.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-zinc-800 p-3 sm:p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                            <ThumbsDown className="text-red-500" size={18} />
+                            <span className="text-sm sm:text-base text-gray-400">Downvotes</span>
+                        </div>
+                        <p className="text-lg sm:text-xl font-bold">{downVotes.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-zinc-800 p-3 sm:p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Calendar className="text-blue-500" size={18} />
+                            <span className="text-sm sm:text-base text-gray-400">Created</span>
+                        </div>
+                        <p className="text-sm sm:text-base font-semibold">{new Date(game?.created).toLocaleDateString()}</p>
+                    </div>
+                    <div className="bg-zinc-800 p-3 sm:p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Clock className="text-purple-500" size={18} />
+                            <span className="text-sm sm:text-base text-gray-400">Updated</span>
+                        </div>
+                        <p className="text-sm sm:text-base font-semibold">{new Date(game?.updated).toLocaleDateString()}</p>
                     </div>
                 </div>
-
-                <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-zinc-800/50 p-4 rounded-xl flex items-center gap-3">
-                            <ThumbsUp className="text-green-500" />
-                            <div>
-                                <p className="text-sm text-gray-400">Upvotes</p>
-                                <p className="text-lg font-bold">{upVotes.toLocaleString()}</p>
-                            </div>
-                        </div>
-                        <div className="bg-zinc-800/50 p-4 rounded-xl flex items-center gap-3">
-                            <ThumbsDown className="text-red-500" />
-                            <div>
-                                <p className="text-sm text-gray-400">Downvotes</p>
-                                <p className="text-lg font-bold">{downVotes.toLocaleString()}</p>
-                            </div>
-                        </div>
+                <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
+                    <div className="text-sm sm:text-base">
+                        <span className="text-gray-400">Like Ratio: </span>
+                        <span className="text-white font-bold">{likeRatio}%</span>
                     </div>
-
-                    <div>
-                        <h3 className="text-xl font-bold mb-3">Description</h3>
-                        <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">
-                            {game.description}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-400 border-t border-zinc-800 pt-6">
-                        <div className="flex items-center gap-2">
-                            <Calendar size={16} />
-                            Created: {new Date(game.created).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Clock size={16} />
-                            Updated: {new Date(game.updated).toLocaleDateString()}
-                        </div>
-                    </div>
-
-                    <div className="flex justify-end pt-4">
-                        <a
-                            href={`https://www.roblox.com/games/${game.rootPlace?.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-white text-black px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center gap-2"
-                        >
-                            Play on Roblox
-                        </a>
-                    </div>
+                    <a
+                        href={`https://www.roblox.com/games/${game?.rootPlaceId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold transition-colors text-sm sm:text-base"
+                    >
+                        Play Game
+                    </a>
                 </div>
             </div>
         </div>
     );
 };
-
 export default GameDetailsModal;
