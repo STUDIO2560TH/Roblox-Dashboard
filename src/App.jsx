@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchGroupGames, fetchGameDetails, fetchThumbnails, fetchGroupDetails, fetchGameVotes } from './services/roblox';
+import { fetchGroupGames, fetchGameDetails, fetchThumbnails, fetchGroupDetails, fetchGameVotes } from './services/roblox.js';
 import GameCard from './components/GameCard';
 import GroupStats from './components/GroupStats';
 import GameDetailsModal from './components/GameDetailsModal';
@@ -126,3 +126,4 @@ function App() {
 }
 
 export default App;
+
