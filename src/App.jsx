@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { fetchGroupGames, fetchGameDetails, fetchThumbnails, fetchGroupDetails, fetchGameVotes } from './services/roblox.js';
-import GameCard from './components/GameCard';
-import GroupStats from './components/GroupStats';
-import GameDetailsModal from './components/GameDetailsModal';
-import OverallStats from './components/OverallStats';
+import GameCard from './components/GameCard.jsx';
+import GroupStats from './components/GroupStats.jsx';
+import GameDetailsModal from './components/GameDetailsModal.jsx';
+import OverallStats from './components/OverallStats.jsx';
 import { LayoutGrid } from 'lucide-react';
 
 const GROUPS = [
@@ -126,4 +126,5 @@ function App() {
 }
 
 export default App;
+
 
