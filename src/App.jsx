@@ -4,7 +4,7 @@ import GameCard from './components/GameCard.jsx';
 import GroupStats from './components/GroupStats.jsx';
 import GameDetailsModal from './components/GameDetailsModal.jsx';
 import OverallStats from './components/OverallStats.jsx';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, RefreshCw } from 'lucide-react';
 const GROUPS = [
     { id: '35507841', name: 'Gn Studios ∞' },
     { id: '6443807', name: 'Nearo' }
@@ -16,6 +16,7 @@ function App() {
     const [votes, setVotes] = useState({});
     const [loading, setLoading] = useState(true);
     const [selectedGame, setSelectedGame] = useState(null);
+    const [lastUpdate, setLastUpdate] = useState(new Date());
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
@@ -56,18 +57,31 @@ function App() {
             setGames(gamesData);
             setGroupDetails(detailsData);
             setLoading(false);
+            setLastUpdate(new Date());
         };
         loadData();
+        // Auto-refresh every 30 seconds
+        const interval = setInterval(() => {
+            loadData();
+        }, 30000);
+        // Cleanup interval on unmount
+        return () => clearInterval(interval);
     }, []);
     return (
         <div className="min-h-screen bg-[#0f0f0f] text-white p-3 sm:p-6 md:p-8 font-sans">
-            <header className="mb-6 sm:mb-10 flex items-center gap-3 border-b border-zinc-800 pb-4">
-                <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-900/20">
-                    <LayoutGrid className="w-6 h-6" />
+            <header className="mb-6 sm:mb-10 flex items-center justify-between border-b border-zinc-800 pb-4">
+                <div className="flex items-center gap-3">
+                    <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-900/20">
+                        <LayoutGrid className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Roblox Dashboard</h1>
+                        <p className="text-xs sm:text-sm text-gray-400">Tracking games for Gn Studios & Nearo</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Roblox Dashboard</h1>
-                    <p className="text-xs sm:text-sm text-gray-400">Tracking games for Gn Studios & Nearo</p>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <RefreshCw className="w-3 h-3 animate-spin" style={{ animationDuration: '3s' }} />
+                    <span className="hidden sm:inline">Updates every 30s</span>
                 </div>
             </header>
             {loading ? (
