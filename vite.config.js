@@ -8,5 +8,6 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
-    base: '/roblox-dashboard/', // Replace with your repo name
+  base: '/',
 })
+
