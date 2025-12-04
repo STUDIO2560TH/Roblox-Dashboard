@@ -60,14 +60,14 @@ function App() {
         loadData();
     }, []);
     return (
-        <div className="min-h-screen bg-[#0f0f0f] text-white p-4 sm:p-6 md:p-8 font-sans">
-            <header className="mb-8 sm:mb-12 flex items-center gap-3 sm:gap-4 border-b border-zinc-800 pb-4 sm:pb-6">
-                <div className="bg-blue-600 p-2 sm:p-3 rounded-xl shadow-lg shadow-blue-900/20">
-                    <LayoutGrid className="w-6 h-6 sm:w-8 sm:h-8" />
+        <div className="min-h-screen bg-[#0f0f0f] text-white p-3 sm:p-6 md:p-8 font-sans">
+            <header className="mb-6 sm:mb-10 flex items-center gap-3 border-b border-zinc-800 pb-4">
+                <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-900/20">
+                    <LayoutGrid className="w-6 h-6" />
                 </div>
                 <div>
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Roblox Dashboard</h1>
-                    <p className="text-sm sm:text-base text-gray-400">Tracking games for Gn Studios & Nearo</p>
+                    <p className="text-xs sm:text-sm text-gray-400">Tracking games for Gn Studios & Nearo</p>
                 </div>
             </header>
             {loading ? (
@@ -75,7 +75,7 @@ function App() {
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
             ) : (
-                <div className="space-y-12 sm:space-y-16">
+                <div className="space-y-8 sm:space-y-12">
                     <OverallStats groupsData={games} groupDetails={groupDetails} />
                     {GROUPS.map(group => (
                         <section key={group.id}>
@@ -84,7 +84,7 @@ function App() {
                                 memberCount={groupDetails[group.id]?.memberCount || 0}
                                 games={games[group.id] || []}
                             />
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
                                 {games[group.id]?.map(game => (
                                     <GameCard
                                         key={game.id}
@@ -94,7 +94,7 @@ function App() {
                                     />
                                 ))}
                                 {(!games[group.id] || games[group.id].length === 0) && (
-                                    <p className="text-gray-500 italic">No games found.</p>
+                                    <p className="text-gray-500 italic col-span-2">No games found.</p>
                                 )}
                             </div>
                         </section>
