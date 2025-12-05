@@ -14,12 +14,12 @@ function App() {
     const [thumbnails, setThumbnails] = useState({});
     const [groupDetails, setGroupDetails] = useState({});
     const [votes, setVotes] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [selectedGame, setSelectedGame] = useState(null);
     const [lastUpdate, setLastUpdate] = useState(new Date());
     useEffect(() => {
         const loadData = async () => {
-            setLoading(true);
+            // setLoading(true); // disabled for smooth updates
             const gamesData = {};
             const detailsData = {};
             const allUniverseIds = [];
@@ -56,7 +56,7 @@ function App() {
             setVotes(votesData);
             setGames(gamesData);
             setGroupDetails(detailsData);
-            setLoading(false);
+            // setLoading(false); // disabled
             setLastUpdate(new Date());
         };
         loadData();
