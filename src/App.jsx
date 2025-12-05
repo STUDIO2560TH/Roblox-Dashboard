@@ -60,9 +60,28 @@ function App() {
             setLastUpdate(new Date());
         };
         loadData();
-        // Auto-refresh every 30 seconds
-        const interval = setInterval(() => {
-            loadData();
+        // Auto-refresh every 30 seconds – only update player counts and votes
+        const interval = setInterval(async () => {
+            // Gather all game IDs currently loaded
+            const allIds = Object.values(games).flat().map(g => g.id);
+            if (allIds.length === 0) return;
+            // Fetch updated playing counts
+            const updatedDetails = await fetchGameDetails(allIds);
+            if (updatedDetails.length) {
+                setGames(prevGames => {
+                    const newGames = { ...prevGames };
+                    for (const gid in newGames) {
+                        newGames[gid] = newGames[gid].map(g => {
+                            const detail = updatedDetails.find(d => d.id === g.id);
+                            return detail ? { ...g, playing: detail.playing, created: detail.created, updated: detail.updated } : g;
+                        });
+                    }
+                    return newGames;
+                });
+            }
+            // Fetch updated votes
+            const updatedVotes = await fetchGameVotes(allIds);
+            setVotes(updatedVotes);
         }, 30000);
         // Cleanup interval on unmount
         return () => clearInterval(interval);
