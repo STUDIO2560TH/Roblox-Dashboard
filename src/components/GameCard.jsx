@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Users, Eye } from 'lucide-react';
 const GameCard = ({ game, thumbnail, onClick }) => {
+    const [prevPlaying, setPrevPlaying] = useState(game.playing || 0);
+    const [animate, setAnimate] = useState(false);
+    useEffect(() => {
+        if (game.playing !== prevPlaying) {
+            setAnimate(true);
+            const timer = setTimeout(() => setAnimate(false), 600);
+            setPrevPlaying(game.playing);
+            return () => clearTimeout(timer);
+        }
+    }, [game.playing, prevPlaying]);
     return (
         <div
             onClick={() => onClick(game)}
@@ -19,11 +29,11 @@ const GameCard = ({ game, thumbnail, onClick }) => {
                 <div className="flex items-center justify-between text-xs text-gray-400">
                     <div className="flex items-center gap-1.5">
                         <Users size={13} className="flex-shrink-0" />
-                        <span className="font-medium">{game.playing || 0}</span>
+                        <span className={animate ? 'count-change' : ''}>{game.playing || 0}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <Eye size={13} className="flex-shrink-0" />
-                        <span className="font-medium">{(game.placeVisits || 0).toLocaleString()}</span>
+                        <span>{(game.placeVisits || 0).toLocaleString()}</span>
                     </div>
                 </div>
             </div>
