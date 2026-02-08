@@ -1,5 +1,4 @@
-
-const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+const PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
 const FALLBACK_DATA = {
     '35507841': [
@@ -61,12 +60,15 @@ const FALLBACK_VOTES = {
     '8542980908': { upVotes: 1500, downVotes: 100 }
 };
 
+const getProxiedUrl = (url) => `${PROXY_URL}${encodeURIComponent(url)}`;
+
 export const fetchGroupGames = async (groupId) => {
     try {
-        const response = await fetch(`${PROXY_URL}https://games.roblox.com/v2/groups/${groupId}/games?accessFilter=2&sortOrder=Asc&limit=100`);
+        const url = getProxiedUrl(`https://games.roblox.com/v2/groups/${groupId}/games?accessFilter=2&sortOrder=Asc&limit=100`);
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        return data.data;
+        return data?.data || FALLBACK_DATA[groupId] || [];
     } catch (error) {
         console.warn(`Failed to fetch games for group ${groupId}, using fallback data.`, error);
         return FALLBACK_DATA[groupId] || [];
@@ -74,13 +76,14 @@ export const fetchGroupGames = async (groupId) => {
 };
 
 export const fetchGameDetails = async (universeIds) => {
-    if (!universeIds.length) return [];
+    if (!universeIds || !universeIds.length) return [];
     try {
         const ids = universeIds.join(',');
-        const response = await fetch(`${PROXY_URL}https://games.roblox.com/v1/games?universeIds=${ids}`);
+        const url = getProxiedUrl(`https://games.roblox.com/v1/games?universeIds=${ids}`);
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        return data.data;
+        return data?.data || [];
     } catch (error) {
         console.warn('Failed to fetch game details', error);
         return [];
@@ -92,13 +95,14 @@ export const getThumbnailUrl = (placeId) => {
 }
 
 export const fetchThumbnails = async (universeIds) => {
-    if (!universeIds.length) return [];
+    if (!universeIds || !universeIds.length) return [];
     try {
         const ids = universeIds.join(',');
-        const response = await fetch(`${PROXY_URL}https://thumbnails.roblox.com/v1/games/icons?universeIds=${ids}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false`);
+        const url = getProxiedUrl(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${ids}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false`);
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        return data.data;
+        return data?.data || [];
     } catch (error) {
         console.warn('Failed to fetch thumbnails', error);
         return [];
@@ -107,10 +111,11 @@ export const fetchThumbnails = async (universeIds) => {
 
 export const fetchGroupDetails = async (groupId) => {
     try {
-        const response = await fetch(`${PROXY_URL}https://groups.roblox.com/v1/groups/${groupId}`);
+        const url = getProxiedUrl(`https://groups.roblox.com/v1/groups/${groupId}`);
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        return data;
+        return data || FALLBACK_GROUP_DETAILS[groupId] || { memberCount: 0 };
     } catch (error) {
         console.warn(`Failed to fetch details for group ${groupId}`, error);
         return FALLBACK_GROUP_DETAILS[groupId] || { memberCount: 0 };
@@ -118,19 +123,22 @@ export const fetchGroupDetails = async (groupId) => {
 };
 
 export const fetchGameVotes = async (universeIds) => {
-    if (!universeIds.length) return {};
+    if (!universeIds || !universeIds.length) return {};
     try {
         const ids = universeIds.join(',');
-        const response = await fetch(`${PROXY_URL}https://games.roblox.com/v1/games/votes?universeIds=${ids}`);
+        const url = getProxiedUrl(`https://games.roblox.com/v1/games/votes?universeIds=${ids}`);
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         const votesMap = {};
-        data.data.forEach(v => {
-            votesMap[v.id] = v;
-        });
+        if (data?.data) {
+            data.data.forEach(v => {
+                votesMap[v.id] = v;
+            });
+        }
         return votesMap;
     } catch (error) {
-        console.warn('Failed to fetch game votes', error);
+        console.warn('Failed to fetch game votes, using fallback', error);
         return FALLBACK_VOTES;
     }
 };
