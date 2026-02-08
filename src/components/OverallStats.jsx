@@ -1,6 +1,5 @@
-import React from 'react';
-import { TrendingUp, Users, Gamepad2, Eye, Activity } from 'lucide-react';
-const StatCard = ({ icon: Icon, label, value, gradient }) => (
+import { TrendingUp, Users, Gamepad2, Eye, Activity, Coins } from 'lucide-react';
+const StatCard = ({ icon: Icon, label, value, gradient, subValue }) => (
     <div className={`${gradient} p-4 rounded-xl shadow-lg relative overflow-hidden`}>
         <div className="absolute top-2 right-2 bg-white/20 p-1.5 rounded-lg">
             <TrendingUp className="text-white" size={14} />
@@ -9,20 +8,26 @@ const StatCard = ({ icon: Icon, label, value, gradient }) => (
             <Icon className="text-white mb-2" size={22} />
             <p className="text-white/90 text-xs font-medium mb-1">{label}</p>
             <p className="text-white text-2xl font-bold">{value}</p>
+            {subValue && <p className="text-white/60 text-[10px] mt-1">{subValue}</p>}
         </div>
     </div>
 );
-const OverallStats = ({ groupsData, groupDetails }) => {
+const OverallStats = ({ groupsData, groupDetails, revenueData = {} }) => {
     let totalMembers = 0;
     let totalGames = 0;
     let totalVisits = 0;
     let totalPlaying = 0;
+    let totalRevenue = 0;
     Object.keys(groupsData).forEach(groupId => {
         const games = groupsData[groupId] || [];
         totalGames += games.length;
         totalVisits += games.reduce((acc, game) => acc + (game.placeVisits || 0), 0);
         totalPlaying += games.reduce((acc, game) => acc + (game.playing || 0), 0);
         totalMembers += groupDetails[groupId]?.memberCount || 0;
+
+        games.forEach(game => {
+            totalRevenue += revenueData[game.id] || 0;
+        });
     });
     return (
         <div className="mb-8">
@@ -32,15 +37,22 @@ const OverallStats = ({ groupsData, groupDetails }) => {
                 </div>
                 <div>
                     <h2 className="text-lg font-bold text-white">Overall Statistics</h2>
-                    <p className="text-xs text-gray-400">Combined metrics</p>
+                    <p className="text-xs text-gray-400">Combined metrics (Daily Revenue requires API Key)</p>
                 </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <StatCard
                     icon={Users}
                     label="Total Members"
                     value={totalMembers.toLocaleString()}
                     gradient="bg-gradient-to-br from-blue-600 to-blue-800"
+                />
+                <StatCard
+                    icon={Coins}
+                    label="Daily Revenue"
+                    value={`${totalRevenue.toLocaleString()}`}
+                    subValue="Robux (Last 24h)"
+                    gradient="bg-gradient-to-br from-amber-500 to-amber-700"
                 />
                 <StatCard
                     icon={Gamepad2}
