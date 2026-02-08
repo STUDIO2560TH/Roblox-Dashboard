@@ -1,5 +1,5 @@
 
-const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
 
 const FALLBACK_DATA = {
     '35507841': [
