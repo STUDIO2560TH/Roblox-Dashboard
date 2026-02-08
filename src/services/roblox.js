@@ -1,5 +1,5 @@
 
-const PROXY_URL = 'https://corsproxy.io/?';
+const PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
 const FALLBACK_DATA = {
     '35507841': [
