@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchGroupGames, fetchGameDetails, fetchThumbnails, fetchGroupDetails, fetchGameVotes, fetchRevenue } from './services/roblox.js';
+import { fetchGroupGames, fetchGameDetails, fetchThumbnails, fetchGroupDetails, fetchGameVotes } from './services/roblox.js';
 import GameCard from './components/GameCard.jsx';
 import GroupStats from './components/GroupStats.jsx';
 import GameDetailsModal from './components/GameDetailsModal.jsx';
@@ -14,7 +14,6 @@ function App() {
     const [thumbnails, setThumbnails] = useState({});
     const [groupDetails, setGroupDetails] = useState({});
     const [votes, setVotes] = useState({});
-    const [revenue, setRevenue] = useState({});
     const [loading, setLoading] = useState(false);
     const [selectedGame, setSelectedGame] = useState(null);
     const [lastUpdate, setLastUpdate] = useState(new Date());
@@ -55,13 +54,6 @@ function App() {
             // Fetch Votes
             const votesData = await fetchGameVotes(allUniverseIds);
             setVotes(votesData);
-            // Fetch Revenue (API Key required)
-            const revenueMap = {};
-            for (const uid of allUniverseIds) {
-                const rev = await fetchRevenue(uid);
-                revenueMap[uid] = rev;
-            }
-            setRevenue(revenueMap);
             setGames(gamesData);
             setGroupDetails(detailsData);
             // setLoading(false); // disabled
@@ -92,24 +84,12 @@ function App() {
             setVotes(updatedVotes);
         }, 30000);
 
-        // Refresh revenue every 5 minutes (slower because it's daily data)
-        const revenueInterval = setInterval(async () => {
-            const allIds = Object.values(games).flat().map(g => g.id);
-            if (allIds.length === 0) return;
-            const newRevenue = {};
-            for (const uid of allIds) {
-                const rev = await fetchRevenue(uid);
-                newRevenue[uid] = rev;
-            }
-            setRevenue(newRevenue);
-        }, 300000);
-
         // Cleanup interval on unmount
         return () => {
             clearInterval(interval);
-            clearInterval(revenueInterval);
         };
-    }, [games]); // Updated dependencies for intervals to see games
+    }, [games]);
+    // Updated dependencies for intervals to see games
     return (
         <div className="min-h-screen bg-[#0f0f0f] text-white p-3 sm:p-6 md:p-8 font-sans">
             <header className="mb-6 sm:mb-10 flex items-center justify-between border-b border-zinc-800 pb-4">
@@ -133,7 +113,7 @@ function App() {
                 </div>
             ) : (
                 <div className="space-y-8 sm:space-y-12">
-                    <OverallStats groupsData={games} groupDetails={groupDetails} revenueData={revenue} />
+                    <OverallStats groupsData={games} groupDetails={groupDetails} />
                     {GROUPS.map(group => (
                         <section key={group.id}>
                             <GroupStats

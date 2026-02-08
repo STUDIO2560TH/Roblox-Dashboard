@@ -142,15 +142,3 @@ export const fetchGameVotes = async (universeIds) => {
         return FALLBACK_VOTES;
     }
 };
-
-export const fetchRevenue = async (universeId) => {
-    try {
-        const response = await fetch(`/api/revenue?universeId=${universeId}`);
-        if (!response.ok) throw new Error('Backend response was not ok');
-        const data = await response.json();
-        return data.revenue || 0;
-    } catch (error) {
-        console.warn(`Failed to fetch revenue for universe ${universeId}`, error);
-        return 0;
-    }
-};
