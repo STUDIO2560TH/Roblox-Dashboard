@@ -4,6 +4,7 @@ import GameCard from './components/GameCard.jsx';
 import GroupStats from './components/GroupStats.jsx';
 import GameDetailsModal from './components/GameDetailsModal.jsx';
 import OverallStats from './components/OverallStats.jsx';
+import DashboardSkeleton from './components/DashboardSkeleton.jsx';
 import { LayoutGrid, RefreshCw } from 'lucide-react';
 const GROUPS = [
     { id: '35507841', name: 'Gn Studios ∞' },
@@ -19,7 +20,7 @@ function App() {
     const [lastUpdate, setLastUpdate] = useState(new Date());
     useEffect(() => {
         const loadData = async () => {
-            // setLoading(true); // disabled for smooth updates
+            setLoading(true);
             const gamesData = {};
             const detailsData = {};
             const allUniverseIds = [];
@@ -56,7 +57,7 @@ function App() {
             setVotes(votesData);
             setGames(gamesData);
             setGroupDetails(detailsData);
-            // setLoading(false); // disabled
+            setLoading(false);
             setLastUpdate(new Date());
         };
         loadData();
@@ -88,7 +89,8 @@ function App() {
         return () => {
             clearInterval(interval);
         };
-    }, [games]);
+    }, []); // Empty dependency array to run only once on mount
+
     // Updated dependencies for intervals to see games
     return (
         <div className="min-h-screen bg-[#0f0f0f] text-white p-3 sm:p-6 md:p-8 font-sans">
@@ -108,9 +110,7 @@ function App() {
                 </div>
             </header>
             {loading ? (
-                <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
+                <DashboardSkeleton />
             ) : (
                 <div className="space-y-8 sm:space-y-12">
                     <OverallStats groupsData={games} groupDetails={groupDetails} />
